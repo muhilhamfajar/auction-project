@@ -20,9 +20,6 @@ migrate:
 		php bin/console doctrine:fixtures:load --no-interaction \
 	"
 
-test:
-	docker-compose run --rm php php bin/phpunit
-
 logs:
 	docker-compose logs -f
 
@@ -48,7 +45,6 @@ help:
 	@echo "  build               - Rebuild the Docker containers"
 	@echo "  install             - Install/update dependencies"
 	@echo "  migrate             - Run database migrations"
-	@echo "  test                - Run tests"
 	@echo "  logs                - View logs from all containers"
 	@echo "  shell-php           - Open a shell in the PHP container"
 	@echo "  shell-frontend      - Open a shell in the frontend container"
