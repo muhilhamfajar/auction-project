@@ -3,9 +3,18 @@
 This project is a web auction application for antique items. It allows users to bid on antique items and administrators to set up items for auction.
 
 ## Table of Contents
-- [Setup](#setup)
-- [Running Locally](#running-locally)
-- [Main Features](#main-features)
+- [Antique Items Auction Web Application](#antique-items-auction-web-application)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Running Locally](#running-locally)
+    - [Additional Commands](#additional-commands)
+  - [Test Accounts](#test-accounts)
+    - [Admin Accounts](#admin-accounts)
+    - [Regular User Accounts](#regular-user-accounts)
+  - [Main Features](#main-features)
+  - [Nice to Have](#nice-to-have)
 
 ## Setup
 
@@ -55,7 +64,7 @@ This project is a web auction application for antique items. It allows users to 
 
 3. Access the application:
    - Frontend: `http://localhost:5173`
-   - Backend API: `http://localhost:80`
+   - Backend API: `http://localhost/api`
 
 4. To stop the application:
    ```
@@ -94,6 +103,26 @@ This project is a web auction application for antique items. It allows users to 
   make messenger-status
   ```
 
+## Test Accounts
+
+The application comes with pre-configured test accounts for both admin and regular user roles. You can use these accounts to log in and test different features of the application.
+
+### Admin Accounts
+
+| Username | Password |
+|----------|----------|
+| admin1   | admin1   |
+| admin2   | admin2   |
+
+### Regular User Accounts
+
+| Username | Password |
+|----------|----------|
+| user1    | user1    |
+| user2    | user2    |
+
+Please note that these are test accounts with predefined credentials. In a production environment, you should always use strong, unique passwords and follow security best practices.
+
 ## Main Features
 
 1. **User Authentication**
@@ -102,7 +131,7 @@ This project is a web auction application for antique items. It allows users to 
 
 2. **Home Page**
    - Display list of auction items
-   - Pagination list
+   - Pagination (10 items per page)
    - Search functionality (filter by Name and Description)
    - Sortable Price column
 
@@ -136,3 +165,14 @@ This project is a web auction application for antique items. It allows users to 
     - Migrations for version control of database schema
 
 This application provides a comprehensive platform for antique item auctions, catering to both regular users and administrators with a range of features to enhance the bidding experience.
+
+## Nice to Have
+
+The following features are not currently implemented but would be valuable additions to the project:
+
+* [ ] Permissions feature in backend and frontend
+* [ ] Real-time notifications
+* [ ] Enhance component library with versatile, reusable elements to streamline development and ensure UI consistency
+* [ ] Automatically close auctions
+
+These features could significantly enhance the user experience and functionality of the application. Contributions in these areas are welcome!
