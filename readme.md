@@ -50,6 +50,11 @@ This project is a web auction application for antique items. It allows users to 
    make migrate
    ```
 
+6. Destroy the setup:
+   ```
+   make down
+   ```
+
 ## Running Locally
 
 1. Ensure the application is running:
