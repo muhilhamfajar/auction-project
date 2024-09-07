@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     app.base_url: '%env(APP_URL)%'
+    app.web_url: '%env(WEB_URL)%'
+    mailer_from_address: '%env(MAILER_FROM_ADDRESS)%'
+    mercure.jwt_secret: '%env(MERCURE_JWT_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -41,7 +44,6 @@ services:
         arguments:
             $normalizer: '@serializer.normalizer.object'
         tags: [serializer.normalizer]
-        
 
 
     # add more service definitions when explicit configuration is needed

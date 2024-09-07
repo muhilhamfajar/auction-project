@@ -19,10 +19,10 @@ class UserFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $users = [
-            ['username' => 'admin1', 'roles' => ['ROLE_ADMIN']],
-            ['username' => 'admin2', 'roles' => ['ROLE_ADMIN']],
-            ['username' => 'user1', 'roles' => ['ROLE_USER']],
-            ['username' => 'user2', 'roles' => ['ROLE_USER']],
+            ['username' => 'admin1@gmail.com', 'roles' => ['ROLE_ADMIN'], 'name' => 'admin 1'],
+            ['username' => 'admin2@gmail.com', 'roles' => ['ROLE_ADMIN'], 'name' => 'admin 2'],
+            ['username' => 'user1@gmail.com', 'roles' => ['ROLE_USER'], 'name' => 'user 1'],
+            ['username' => 'user2@gmail.com', 'roles' => ['ROLE_USER'], 'name' => 'user 2'],
         ];
 
         $defaultPassword = 'Password!234';
@@ -31,6 +31,7 @@ class UserFixture extends Fixture
             $user = new User();
             $user->setUsername($userData['username']);
             $user->setRoles($userData['roles']);
+            $user->setName($userData['name']);
             $user->setPassword($this->passwordHasher->hashPassword($user, $defaultPassword));
 
             $manager->persist($user);

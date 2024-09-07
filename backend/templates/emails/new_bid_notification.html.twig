@@ -1,0 +1,19 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}New Bid Notification{% endblock %}
+
+{% block header %}New Bid Alert!{% endblock %}
+
+{% block content %}
+    <h2>Hello {{ user.username }},</h2>
+    <p>Exciting news! A new bid has been placed on an item you're watching:</p>
+    <div style="background-color: #e9f0f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h3 style="color: #4a90e2; margin-top: 0;">{{ item.name }}</h3>
+        <p><strong>New coming bid:</strong> ${{ newBid.amount|number_format(2) }}</p>
+        <p><strong>Your highest bid:</strong> ${{ userBid.amount ? userBid.amount|number_format(2) : '0.00' }}</p>
+        <p><strong>Auction End Time:</strong> {{ item.auctionEndTime|date('g:i A, F j, Y') }}</p>
+    </div>
+    <p>Don't let this opportunity slip away! Place your bid now to stay in the game.</p>
+    <a href="{{ itemUrl }}" class="button">View Item and Bid Now</a>
+    <p style="margin-top: 20px; font-style: italic;">Remember, you can always set up auto-bidding to ensure you don't miss out!</p>
+{% endblock %}

@@ -28,7 +28,13 @@ const routes: CustomRouteRecordRaw[] = [
   {
     path: '/account',
     name: 'account',
-    component: () => import('../pages/account.vue'),
+    component: () => import('../pages/account/index.vue'),
+    meta: { layout: 'auth', requiresAuth: true, userOnly: true }
+  },
+  {
+    path: '/account/auto-bid',
+    name: 'accountAutoBidConfig',
+    component: () => import('../pages/account/autoBidConfig.vue'),
     meta: { layout: 'auth', requiresAuth: true, userOnly: true }
   },
   {

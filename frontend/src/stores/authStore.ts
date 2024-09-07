@@ -19,6 +19,7 @@ export const useAuthStore = defineStore('auth', {
     user: null as User | null,
     token: null as string | null,
     isAuthChecked: false,
+    mercureToken: null as string | null
   }),
   getters: {
     isAuthenticated: (state) => !!state.token && state.user,
@@ -64,6 +65,19 @@ export const useAuthStore = defineStore('auth', {
         throw error
       }
     },
+
+    async fetchMercureToken() {
+      try {
+        const response = await axiosInstance.get('/mercure-jwt', {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+        this.mercureToken = response.data.token
+      } catch (error) {
+        console.error('Failed to fetch Mercure token:', error)
+        throw error
+      }
+    },  
+
     logout() {
       this.user = null
       this.token = null

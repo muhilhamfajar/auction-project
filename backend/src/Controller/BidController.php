@@ -29,7 +29,7 @@ class BidController extends BaseApiController
     public function index(Request $request): JsonResponse
     {
         $paginatedResults = $this->paginationService->paginate($this->bidRepository, $request);
-        return $this->serializeResponse($paginatedResults, ['bid:read','user:read', 'base:read'], Response::HTTP_OK);
+        return $this->serializeResponse($paginatedResults, ['bid:read','user:read', 'base:read', 'item:read'], Response::HTTP_OK);
     }
 
     #[Route('/{uuid}', name: 'bid_show', methods: ['GET'])]

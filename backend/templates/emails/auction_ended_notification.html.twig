@@ -1,0 +1,32 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block subject %}Auction ended for {{ item.name }}{% endblock %}
+
+{% block title %}Auction Ended Notification{% endblock %}
+
+{% block header %}Auction Closed{% endblock %}
+
+{% block content %}
+    <h2>Hello {{ user.username }},</h2>
+    <p>The auction for an item you've been watching has come to a close:</p>
+    <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h3 style="color: #4a90e2; margin-top: 0;">{{ item.name }}</h3>
+        <p><strong>Final selling price:</strong> ${{ item.winningBid ? item.winningBid.amount|number_format(2) : item.startingPrice|number_format(2) }}</p>
+        <p><strong>Your highest bid:</strong> ${{ userHighestBid ? userHighestBid.amount|number_format(2) : '0.00' }}</p>
+        <p><strong>Your bid status:</strong> 
+            {% if item.winningBid and item.winningBid.bidder == user %}
+                <span style="color: #4CAF50;">Won</span>
+            {% elseif userHighestBid %}
+                <span style="color: #F44336;">Outbid</span>
+            {% else %}
+                <span style="color: #FFC107;">Did not bid</span>
+            {% endif %}
+        </p>
+    </div>
+    {% if item.winningBid and item.winningBid.bidder == user %}
+        <p style="font-weight: bold; color: #4CAF50;">Congratulations! You've won this auction. We'll be in touch with next steps.</p>
+    {% else %}
+        <p>Thank you for your interest in this item. Don't worry, there are more great finds waiting for you!</p>
+    {% endif %}
+    <a href="{{ webUrl }}/items" class="button">Explore More Auctions</a>
+{% endblock %}

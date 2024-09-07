@@ -65,3 +65,8 @@ export interface UserNotification {
   message?: string
   isRead?: boolean
 }
+
+export interface NewBid{
+  amount: string;
+  bidder: string;
+}

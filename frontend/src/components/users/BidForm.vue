@@ -42,7 +42,7 @@ const isAuctionEnded = computed(() => {
   const auctionEndTime = new Date(props.item.auctionEndTime);
   const timeLeft = auctionEndTime.getTime() - now.getTime();
 
-  return timeLeft <= 0;
+  return timeLeft <= 0 || props.item.status === 2;
 });
 
 const activateAutoBid = async () => {
@@ -167,15 +167,24 @@ onMounted(async () => {
           <span
             :class="[
               'flex items-center text-sm',
-              latestBid.amount === props.item.highestBid?.amount ? 'text-green-600' : 'text-gray-700',
+              props.item.highestBid?.bidder?.uuid === userStore.user?.uuid
+                ? 'text-green-600'
+                : 'text-gray-700',
             ]"
           >
             <Info
               class="h-4 w-4 mr-2"
-              :class="latestBid.amount === props.item.highestBid?.amount ? 'text-green-500' : 'text-gray-400'"
+              :class="
+                props.item.highestBid?.bidder?.uuid === userStore.user?.uuid
+                  ? 'text-green-500'
+                  : 'text-gray-400'
+              "
             />
             Your latest bid: ${{ latestBid.amount }}
-            <span v-if="latestBid.amount === props.item.highestBid?.amount" class="ml-1" aria-label="Highest bid"
+            <span
+              v-if="props.item.highestBid?.bidder?.uuid === userStore.user?.uuid"
+              class="ml-1"
+              aria-label="Highest bid"
               >🔥</span
             >
           </span>
@@ -192,44 +201,47 @@ onMounted(async () => {
         :disabled="isAuctionEnded"
       />
     </div>
-    <div v-if="userAutoBid" class="bg-blue-100 p-4 rounded-lg shadow-sm mb-4">
-      <h3 class="text-lg font-semibold mb-2">
-        🌟 Your Auto-Bidding is Now Live! 🌟
-      </h3>
-      <p class="mb-4">
-        Congratulations! 🎉 Auto-bidding is active and working its magic. Enjoy
-        hands-free bidding and let our advanced technology optimize your
-        strategy while you sit back and relax.
-      </p>
-    </div>
-    <div v-else-if="autoBiddingConfig" class="mb-4">
-      <label class="flex items-center">
-        <input
-          type="checkbox"
-          v-model="isAutoBid"
-          class="form-checkbox h-5 w-5 text-blue-600"
-          :disabled="isAuctionEnded"
-        />
-        <span class="ml-2 text-gray-700">Enable Auto-bidding 🤖</span>
-      </label>
-    </div>
-    <div v-else class="bg-blue-100 p-4 rounded-lg shadow-sm mb-4">
-      <h3 class="text-lg font-semibold mb-2">
-        🌟 Ready to Boost Your Bidding Game? 🌟
-      </h3>
-      <p class="mb-4">
-        Want to make the most out of your bidding without lifting a finger? 🤖
-        Set up your auto-bidding bot now and let technology do the work for you!
-      </p>
-      <router-link
-        :to="{
-          path: '/account',
-          query: { item: props.item.uuid },
-        }"
-        class="text-blue-600 hover:underline cursor-pointer"
-      >
-        Set up now
-      </router-link>
+    <div v-if="!isAuctionEnded">
+      <div v-if="userAutoBid" class="bg-blue-100 p-4 rounded-lg shadow-sm mb-4">
+        <h3 class="text-lg font-semibold mb-2">
+          🌟 Your Auto-Bidding is Now Live! 🌟
+        </h3>
+        <p class="mb-4">
+          Congratulations! 🎉 Auto-bidding is active and working its magic.
+          Enjoy hands-free bidding and let our advanced technology optimize your
+          strategy while you sit back and relax.
+        </p>
+      </div>
+      <div v-else-if="autoBiddingConfig" class="mb-4">
+        <label class="flex items-center">
+          <input
+            type="checkbox"
+            v-model="isAutoBid"
+            class="form-checkbox h-5 w-5 text-blue-600"
+            :disabled="isAuctionEnded"
+          />
+          <span class="ml-2 text-gray-700">Enable Auto-bidding 🤖</span>
+        </label>
+      </div>
+      <div v-else class="bg-blue-100 p-4 rounded-lg shadow-sm mb-4">
+        <h3 class="text-lg font-semibold mb-2">
+          🌟 Ready to Boost Your Bidding Game? 🌟
+        </h3>
+        <p class="mb-4">
+          Want to make the most out of your bidding without lifting a finger? 🤖
+          Set up your auto-bidding bot now and let technology do the work for
+          you!
+        </p>
+        <router-link
+          :to="{
+            path: '/account/auto-bid',
+            query: { item: props.item.uuid },
+          }"
+          class="text-blue-600 hover:underline cursor-pointer"
+        >
+          Set up now
+        </router-link>
+      </div>
     </div>
 
     <button

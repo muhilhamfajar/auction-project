@@ -38,6 +38,12 @@ messenger-stop:
 messenger-status:
 	@docker-compose exec php php /var/www/html/bin/console messenger:stats
 
+cron-logs:
+	docker-compose exec php tail -f /var/log/cron.log
+
+mailcatcher-logs:
+	docker-compose logs -f mailcatcher
+
 help:
 	@echo "Available commands:"
 	@echo "  up                  - Start the Docker containers"
@@ -51,3 +57,5 @@ help:
 	@echo "  messenger-start     - Start the Symfony Messenger consumer in the background"
 	@echo "  messenger-stop      - Stop the Symfony Messenger consumer"
 	@echo "  messenger-status    - Check the status of the Symfony Messenger consumer"
+	@echo "  cron-logs           - View cron job logs"
+	@echo "  mailcatcher-logs	- View mailcatcher logs"

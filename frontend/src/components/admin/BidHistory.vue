@@ -22,7 +22,7 @@ const totalPages = computed(() =>
 
 const formatDate = (dateString: string): string => {
   const date = parseISO(dateString);
-  return format(date, "MMM d, yyyy HH:mm");
+  return format(date, 'MM/dd/yyyy h:mm a');
 };
 
 const fetchBidHistory = async () => {
@@ -97,7 +97,7 @@ watch(currentPage, fetchBidHistory);
       <template v-if="bids.length > 0">
         <tr v-for="bid in bids" :key="bid.id">
           <td class="px-6 py-4 whitespace-nowrap">
-            {{ bid.bidder?.username }}
+            {{ bid.bidder?.name }}
           </td>
           <td class="px-6 py-4 whitespace-nowrap">${{ bid.amount }}</td>
           <td class="px-6 py-4 whitespace-nowrap">

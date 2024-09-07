@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore';
 import { ref, computed, onMounted, watch } from 'vue';
-import { House, UserCog, LogOut, Bell } from 'lucide-vue-next';
+import { House, Bolt, LogOut, Bell, SquareUserRound } from 'lucide-vue-next';
 import SidebarLink from './SidebarLink.vue';
 import { useRouter } from 'vue-router';
 import { useNotificationStore } from '@/stores/notificationStore';
@@ -56,7 +56,8 @@ const links = computed(() => {
     return [
       { icon: House, text: 'Home', to: '/' },
       { icon: Bell, text: 'Notification', to: '/notifications' },
-      { icon: UserCog, text: 'Account', to: '/account' },
+      { icon: SquareUserRound, text: 'Account', to: '/account' },
+      { icon: Bolt, text: 'Auto Bid Config', to: '/account/auto-bid' },
     ]
   }
 })

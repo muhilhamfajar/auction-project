@@ -10,6 +10,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: BidRepository::class)]
 class Bid extends BaseEntity
 {
+    public const STATUS_PLACED = 1;
+    public const STATUS_WON = 2;
+    public const STATUS_LOST = 3;
+
+
     #[ORM\ManyToOne(inversedBy: 'bids')]
     #[Groups(['bid:read'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -17,6 +22,7 @@ class Bid extends BaseEntity
 
     #[ORM\ManyToOne(inversedBy: 'bids')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['bid:read'])]
     private ?Item $item = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

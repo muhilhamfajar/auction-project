@@ -38,14 +38,14 @@ class BidConfigType extends AbstractType
                 'constraints' => [
                     new Range(['min' => 0, 'max' => 100]),
                 ],
-            ])
-            ->add('reservedAmount', NumberType::class, [
-                'scale' => 2,
-                'required' => false,
-                'constraints' => [
-                    new Range(['min' => 0]),
-                ],
             ]);
+            // ->add('reservedAmount', NumberType::class, [
+            //     'scale' => 2,
+            //     'required' => false,
+            //     'constraints' => [
+            //         new Range(['min' => 0]),
+            //     ],
+            // ]);
 
             $builder->get('user')->addModelTransformer(
                 new UuidToEntityTransformer($this->entityManager, User::class, 'user')

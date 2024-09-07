@@ -12,6 +12,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item extends BaseEntity
 {
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_EXPIRED = 2;
+
     #[ORM\Column(length: 255)]
     #[Groups(['item:read', 'item:write'])]
     private ?string $name = null;
@@ -112,10 +115,9 @@ class Item extends BaseEntity
         return $this->auctionEndTime;
     }
 
-    public function setAuctionEndTime(?\DateTimeInterface $auctionEndTime): static
+    public function setAuctionEndTime(?\DateTime $newEndTime): self
     {
-        $this->auctionEndTime = $auctionEndTime;
-
+        $this->auctionEndTime = $newEndTime->setTimezone(new \DateTimeZone('UTC'));
         return $this;
     }
 

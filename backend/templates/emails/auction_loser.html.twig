@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Auction Ended - {{ item.name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #3498db; color: white; text-align: center; padding: 10px; }
+        .content { background-color: #f9f9f9; padding: 20px; border-radius: 5px; }
+        .button { display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Auction Ended: {{ item.name }}</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{ loserUsername }},</h2>
+            <p>We wanted to let you know that the auction for "{{ item.name }}" has ended.</p>
+            <p>Unfortunately, your highest bid of ${{ loserHighestBid }} was not the winning bid. The item was sold for ${{ winningBid.amount }}.</p>
+            <h3>Auction Details:</h3>
+            <ul>
+                <li>Item: {{ item.name }}</li>
+                <li>Your highest bid: ${{ loserHighestBid }}</li>
+                <li>Winning bid: ${{ winningBid.amount }}</li>
+                <li>Auction end time: {{ item.auctionEndTime|date('F j, Y, g:i a') }}</li>
+            </ul>
+            <p>Don't worry! There are many more exciting items available in our auctions. We encourage you to check out our current listings and participate in upcoming auctions.</p>
+            <p>
+                <a href="{{ itemUrl }}" class="button">View Auction Results</a>
+            </p>
+            <p>Thank you for your participation, and we hope to see you in future auctions!</p>
+            <p>Best regards,<br>The Auction Team</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -58,6 +58,34 @@ export const useBidStore = defineStore("bid", {
       }
     },
 
+    async fetchByUser(
+      bidder: number,
+      page = 1,
+      limit = 10,
+      sort?: string,
+      order?: string,
+    ) {
+      this.loading = true;
+      try {
+        const response = await axiosInstance.get("/bids", {
+          params: {
+            bidder,
+            page,
+            limit,
+            sort,
+            order
+          },
+        });
+        this.bids = response.data.data;
+        return response.data;
+      } catch (error) {
+        this.handleError(error, "Failed to fetch bids");
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async getUserLatestBid(
       item: number,
       bidder: number,

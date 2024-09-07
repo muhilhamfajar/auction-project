@@ -79,8 +79,8 @@ const getTimeLeft = (endTime: Date): string => {
   }
 };
 
-const isAuctionEnded = (endTime: Date): boolean => {
-  return isPast(endTime);
+const isAuctionEnded = (status: number, endTime: Date): boolean => {
+  return isPast(endTime) || status === 2;
 };
 
 const placeBid = (item: Item): void => {
@@ -148,7 +148,6 @@ const nextPage = () => {
 
 watch([currentPage, currentSort], fetchItems);
 
-onMounted(fetchItems);
 onMounted(() => {
   fetchItems();
   fetchMediaBaseUrl();
@@ -287,13 +286,13 @@ onMounted(() => {
               class="text-white font-bold py-2 px-4 rounded"
               :class="{
                 'bg-blue-500 hover:bg-blue-600 text-white': !isAuctionEnded(
-                  item.auctionEndTime
+                  item.status, item.auctionEndTime
                 ),
                 'bg-gray-400 text-gray-200 cursor-not-allowed': isAuctionEnded(
-                  item.auctionEndTime
+                  item.status, item.auctionEndTime
                 ),
               }"
-              :disabled="isAuctionEnded(item.auctionEndTime)"
+              :disabled="isAuctionEnded(item.status, item.auctionEndTime)"
             >
               Place Bid
             </button>

@@ -7,6 +7,7 @@ import { Upload } from "lucide-vue-next";
 import { useItemStore } from "@/stores/itemStore";
 import { useRouter } from "vue-router";
 import { AddNotification } from "@/types/notification";
+import { parseISO, formatISO, format } from 'date-fns';
 
 const props = defineProps<{
   item?: Item;
@@ -40,7 +41,7 @@ const { handleSubmit, errors, values, defineField } = useForm({
     description: props.item?.description ?? "",
     startingPrice: props.item?.startingPrice ?? "",
     auctionEndTime: props.item?.auctionEndTime
-      ? new Date(props.item.auctionEndTime).toISOString().slice(0, 16)
+      ? format(new Date(props.item.auctionEndTime), "yyyy-MM-dd'T'HH:mm")
       : "",
   },
 });
@@ -57,7 +58,8 @@ const imagePreview = ref<string | null>(null);
 const imageError = ref<string | null>(null);
 const isSubmitting = ref(false);
 const existingImageUrl = ref<string | null>(null);
-const itemMedia = ref<ItemMedia | null>(null)
+const itemMedia = ref<ItemMedia | null>(null);
+
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -96,12 +98,15 @@ const handleItemMedia = async (item: Item) => {
 
 const onSubmit = handleSubmit(async (formValues) => {
   isSubmitting.value = true;
+
+  const localAuctionEndTime = parseISO(formValues.auctionEndTime);
+
   try {
     const itemData = {
       name: formValues.name,
       description: formValues.description,
       startingPrice: formValues.startingPrice,
-      auctionEndTime: formValues.auctionEndTime,
+      auctionEndTime: formatISO(localAuctionEndTime)
     };
 
     let item;
@@ -112,7 +117,6 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 
     await handleItemMedia(item);
-
 
     addNotification("Item successfully created!", "success");
     router.push("/dashboard");
@@ -135,18 +139,17 @@ const fetchMediaBaseUrl = async () => {
     const response = await itemStore.getItemMediaBaseUrl();
     return response.baseUrl;
   } catch (error) {
-    console.error('Error fetching media base URL:', error);
+    console.error("Error fetching media base URL:", error);
     return null;
   }
 };
 
-
 const loadExistingImage = async () => {
   if (!props.item?.medias?.length) {
-    return
+    return;
   }
 
-  itemMedia.value = props.item.medias[0]
+  itemMedia.value = props.item.medias[0];
 
   if (itemMedia.value.name) {
     const baseUrl = await fetchMediaBaseUrl();
@@ -160,9 +163,13 @@ onMounted(() => {
   loadExistingImage();
 });
 
-watch(() => props.item, () => {
-  loadExistingImage();
-}, { deep: true });
+watch(
+  () => props.item,
+  () => {
+    loadExistingImage();
+  },
+  { deep: true }
+);
 </script>
 
 <template>
@@ -172,7 +179,7 @@ watch(() => props.item, () => {
         class="max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto mt-4 sm:mt-6 lg:mt-8 p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-md"
       >
         <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">
-          {{ props.item ? 'Update' : 'Create New' }}  Item
+          {{ props.item ? "Update" : "Create New" }} Item
         </h2>
 
         <form @submit="onSubmit">

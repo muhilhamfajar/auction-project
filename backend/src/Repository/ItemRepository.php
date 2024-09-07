@@ -23,6 +23,17 @@ class ItemRepository extends ServiceEntityRepository
         return 'i';
     }
 
+    public function findExpiredAuctions(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.auctionEndTime <= :now')
+            ->andWhere('i.status = :status')
+            ->setParameter('now', new \DateTime())
+            ->setParameter('status', Item::STATUS_ACTIVE)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Item[] Returns an array of Item objects
     //     */

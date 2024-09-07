@@ -53,6 +53,10 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?BidConfig $bidConfig = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['user:read', 'user:write', 'base:read'])]
+    private ?string $name = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -203,6 +207,18 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
         }
 
         $this->bidConfig = $bidConfig;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

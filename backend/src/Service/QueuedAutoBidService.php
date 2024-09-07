@@ -21,7 +21,8 @@ class QueuedAutoBidService
         private BidRepository $bidRepository,
         private BidService $bidService,
         private LoggerInterface $logger,
-        private NotificationService $notificationService
+        private NotificationService $notificationService,
+        private AuctionNotificationService $auctionNotificationService
     ) {
     }
 
@@ -101,7 +102,7 @@ class QueuedAutoBidService
         try {
             $this->bidService->placeBid($bid);
             $this->updateBidConfig($bidConfig, $potentialReservedAmount);
-            $this->checkAndSendAlertNotification($bidConfig);
+            $this->checkAndSendAlertNotification($item, $bidConfig);
             $this->logger->info("Auto-bid placed for user {$user->getId()} on item {$item->getId()} for amount {$newBidAmount}. New reserved amount: {$potentialReservedAmount}");
         } catch (\Exception $e) {
             $this->logger->error("Failed to place auto-bid for user {$user->getId()} on item {$item->getId()}: " . $e->getMessage());
@@ -126,7 +127,7 @@ class QueuedAutoBidService
         $this->entityManager->flush();
     }
 
-    private function checkAndSendAlertNotification(BidConfig $bidConfig): void
+    private function checkAndSendAlertNotification(Item $item, BidConfig $bidConfig): void
     {
         $reservedPercentage = ($bidConfig->getReservedAmount() / $bidConfig->getMaxBidAmount()) * 100;
 
@@ -160,6 +161,9 @@ class QueuedAutoBidService
                 $bidConfig->getReservedAmount(),
                 $bidConfig->getMaxBidAmount()
             );
+
+            $this->auctionNotificationService->sendAutoBidLimitExceededNotification($item, $bidConfig);
+
             $bidConfig->setAlertSent(true);
             $this->entityManager->persist($bidConfig);
             $this->entityManager->flush();

@@ -16,10 +16,19 @@ services:
   php:
     build:
       context: ./docker/php
+    environment:
+      MERCURE_JWT_SECRET: '${MERCURE_JWT_SECRET}'
     volumes:
       - ./backend:/var/www/html
     depends_on:
       - database
+      - mailcatcher
+    # command: >
+    #   sh -c "
+    #     crontab /etc/cron.d/symfony-cron &&
+    #     cron &&
+    #     php-fpm
+    #   "
 
   database:
     image: mysql:8.0
@@ -43,5 +52,32 @@ services:
       - "5173:5173"
     command: npm run dev -- --host
 
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: '${MERCURE_JWT_SECRET}'
+      MERCURE_SUBSCRIBER_JWT_KEY: '${MERCURE_JWT_SECRET}'
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:5173
+        anonymous
+        subscriptions
+        ui
+    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    ports:
+      - "3000:80"
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
+
 volumes:
   mysql_data:
+  mercure_data:
+  mercure_config:

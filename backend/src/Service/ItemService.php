@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Bid;
 use App\Entity\Item;
 use App\Repository\ItemRepository;
 use App\Repository\BidRepository;
@@ -14,7 +15,8 @@ class ItemService
         private ItemRepository $itemRepository,
         private BidRepository $bidRepository,
         private PaginationService $paginationService,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private AuctionNotificationService $auctionNotificationService
     ) {
     }
 
@@ -95,6 +97,63 @@ class ItemService
         }
         if (isset($data['auctionEndTime'])) {
             $item->setAuctionEndTime(new \DateTime($data['auctionEndTime']));
+        }
+    }
+
+    public function closeExpiredAuction(int $itemId): void
+    {
+        $item = $this->itemRepository->find($itemId);
+
+        if (! $item || $item->getStatus() !== Item::STATUS_ACTIVE || $item->getAuctionEndTime() > new \DateTime()) {
+            return;
+        }
+
+        $winningBid = $this->bidRepository->findHighestBidForItem($item);
+
+        if ($winningBid) {
+            $this->awardItemToWinner($item, $winningBid);
+            $this->auctionNotificationService->sendWinnerNotification($item, $winningBid);
+            $this->sendLoserNotifications($item, $winningBid);
+        }
+
+        $item->setStatus(Item::STATUS_EXPIRED);
+        $this->entityManager->flush();
+
+        // $this->sendAuctionEndedNotifications($item);
+    }
+
+    private function awardItemToWinner(Item $item, Bid $winningBid): void
+    {
+        $winningBid->setStatus(Bid::STATUS_WON);
+        $this->entityManager->persist($winningBid);
+
+        $losingBidders = $this->bidRepository->findLosingBids($item, $winningBid);
+        foreach ($losingBidders as $bid) {
+            $bid->setStatus(Bid::STATUS_LOST);
+            $this->entityManager->persist($bid);
+        }
+    }
+
+    private function sendLoserNotifications(Item $item, Bid $winningBid): void
+    {
+        $losingBidders = $this->bidRepository->findUniqueLosingBiddersWithHighestBids($item, $winningBid->getBidder());
+
+        foreach ($losingBidders as $losingBidder) {
+            $this->auctionNotificationService->sendLoserNotification(
+                $item,
+                $winningBid,
+                $losingBidder
+            );
+        }
+    }
+
+    private function sendAuctionEndedNotifications(Item $item): void
+    {
+        $bidders = $this->bidRepository->findUniqueBiddersByItem($item);
+
+        foreach ($bidders as $bidder) {
+            $highestBid = $this->bidRepository->findHighestBidForItemAndUser($item, $bidder);
+            $this->auctionNotificationService->sendAuctionEndedNotification($item, $bidder, $highestBid);
         }
     }
 }

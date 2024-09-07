@@ -1,0 +1,26 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Auto-Bid Limit Notification{% endblock %}
+
+{% block header %}Auto-Bid Limit Reached{% endblock %}
+
+{% block content %}
+    <h2>Hello {{ user.username }},</h2>
+    <p>Your auto-bid limit has been reached for the following item:</p>
+    <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #ffeeba;">
+        <h3 style="color: #856404; margin-top: 0;">{{ item.name }}</h3>
+        <p><strong>Your auto-bid limit:</strong> ${{ bidConfig.maxBidAmount|number_format(2) }}</p>
+        <p><strong>Time remaining:</strong> {{ item.auctionEndTime|date('g:i A, F j, Y') }}</p>
+    </div>
+    <p>The bidding has exceeded your maximum auto-bid amount. To stay in the running for this item, you have two options:</p>
+    <ol>
+        <li>Increase your maximum auto-bid amount</li>
+        <li>Place a manual bid above the current highest bid</li>
+    </ol>
+    <p>Act fast to avoid missing out on this opportunity!</p>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ itemUrl }}" class="button" style="margin-right: 10px;">View Item</a>
+        <a href="{{ webUrl }}/account" class="button" style="background-color: #28a745;">Adjust Auto-Bid Settings</a>
+    </div>
+    <p style="margin-top: 20px; font-style: italic;">Remember, you can always update your auto-bid settings or place manual bids to stay competitive in our auctions.</p>
+{% endblock %}
