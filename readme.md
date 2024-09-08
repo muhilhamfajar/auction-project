@@ -16,10 +16,6 @@ This project is a web auction application for antique items. It allows users to 
   - [Main Features](#main-features)
   - [API Documentation](#api-documentation)
   - [Nice to Have](#nice-to-have)
-- [Antique Items Auction Web Application](#antique-items-auction-web-application-1)
-  - [Running Locally](#running-locally-1)
-    - [Available Commands](#available-commands)
-    - [Additional Useful Commands](#additional-useful-commands)
 
 ## Setup
 
@@ -31,8 +27,8 @@ This project is a web auction application for antique items. It allows users to 
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
-   cd <project-directory>
+   git clone https://github.com/muhilhamfajar/auction-project
+   cd auction-project
    ```
 
 2. Build the Docker containers:
