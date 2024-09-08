@@ -16,6 +16,10 @@ This project is a web auction application for antique items. It allows users to 
   - [Main Features](#main-features)
   - [API Documentation](#api-documentation)
   - [Nice to Have](#nice-to-have)
+- [Antique Items Auction Web Application](#antique-items-auction-web-application-1)
+  - [Running Locally](#running-locally-1)
+    - [Available Commands](#available-commands)
+    - [Additional Useful Commands](#additional-useful-commands)
 
 ## Setup
 
@@ -71,6 +75,7 @@ This project is a web auction application for antique items. It allows users to 
 3. Access the application:
    - Frontend: `http://localhost:5173`
    - Backend API: `http://localhost/api`
+   - Mailcatcher: `http://localhost:1080/`
 
 4. To stop the application:
    ```
@@ -79,35 +84,26 @@ This project is a web auction application for antique items. It allows users to 
 
 ### Additional Commands
 
-- View logs:
-  ```
-  make logs
-  ```
+To see a list of all available commands, run:
+```
+make help
+```
 
-- Run tests:
-  ```
-  make test
-  ```
+This will display the following commands and their descriptions:
 
-- Access PHP container shell:
-  ```
-  make shell-php
-  ```
-
-- Access Frontend container shell:
-  ```
-  make shell-frontend
-  ```
-
-- Stop Symfony Messenger consumer:
-  ```
-  make messenger-stop
-  ```
-
-- Check Symfony Messenger status:
-  ```
-  make messenger-status
-  ```
+- `up`: Start the Docker containers
+- `down`: Stop the Docker containers
+- `build`: Rebuild the Docker containers
+- `install`: Install/update dependencies
+- `migrate`: Run database migrations and load fixtures
+- `logs`: View logs from all containers
+- `shell-php`: Open a shell in the PHP container
+- `shell-frontend`: Open a shell in the frontend container
+- `messenger-start`: Start the Symfony Messenger consumer in the background
+- `messenger-stop`: Stop the Symfony Messenger consumer
+- `messenger-status`: Check the status of the Symfony Messenger consumer
+- `cron-logs`: View cron job logs
+- `mailcatcher-logs`: View mailcatcher logs
 
 ## Test Accounts
 

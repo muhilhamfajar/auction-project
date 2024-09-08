@@ -69,7 +69,6 @@ services:
         cors_origins http://localhost:5173
         anonymous
         subscriptions
-        ui
     command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
     ports:
       - "3000:80"
