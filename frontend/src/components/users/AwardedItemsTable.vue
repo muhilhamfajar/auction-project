@@ -97,7 +97,7 @@ onMounted(fetchAwardedItems);
       @sort="handleSort"
     >
       <template #itemName="{ item }">
-        <router-link :to="{ path: `/items/${item.item.uuid}` }">
+        <router-link class="text-blue-600 hover:text-blue-800" :to="{ path: `/items/${item.item.uuid}` }">
           {{ item.item.name }}
         </router-link>
       </template>

@@ -172,7 +172,7 @@ class BidRepository extends ServiceEntityRepository
         }
 
         $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-        
+
         switch ($sort) {
             case 'item.name':
                 $qb->orderBy('i.name', $order);
@@ -202,6 +202,4 @@ class BidRepository extends ServiceEntityRepository
 
         $qb->getQuery()->execute();
     }
-
-
 }

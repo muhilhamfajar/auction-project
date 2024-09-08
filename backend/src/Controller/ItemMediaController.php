@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\ItemMedia;
 use App\Form\ItemMediaType;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use App\Repository\ItemMediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[Route('/api/item-medias')]
+#[OA\Tag(name: 'Item Media')]
 class ItemMediaController extends BaseApiController
 {
     public function __construct(
@@ -24,6 +28,29 @@ class ItemMediaController extends BaseApiController
     }
 
     #[Route('', name: 'item_media_create', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/item-medias',
+        summary: 'Create a new item media',
+        description: 'Creates a new item media with the provided data'
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(ref: new Model(type: ItemMediaType::class))
+        )
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Item media created successfully',
+        content: new OA\JsonContent(ref: new Model(type: ItemMedia::class, groups: ['item_media:read', 'item:read', 'base:read']))
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Invalid input',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'errors', type: 'object')])
+    )]
+    #[Security(name: 'Bearer')]
     public function create(Request $request): JsonResponse
     {
         $itemMedia = new ItemMedia();
@@ -46,6 +73,17 @@ class ItemMediaController extends BaseApiController
     }
 
     #[Route('/base-url', name: 'item_media_base_url', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/item-medias/base-url',
+        summary: 'Get base URL for item media',
+        description: 'Retrieves the base URL for item media files'
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Successful operation',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'baseUrl', type: 'string')])
+    )]
+    #[Security(name: 'Bearer')]
     public function getBaseUrl(): JsonResponse
     {
         $baseUrl = $this->getParameter('app.base_url');
@@ -57,6 +95,41 @@ class ItemMediaController extends BaseApiController
     }
 
     #[Route('/{uuid}', name: 'item_media_update', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/item-medias/{uuid}',
+        summary: 'Update an existing item media',
+        description: 'Updates an existing item media with the provided data'
+    )]
+    #[OA\Parameter(
+        name: 'uuid',
+        in: 'path',
+        description: 'UUID of the item media to update',
+        schema: new OA\Schema(type: 'string'),
+        required: true
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(ref: new Model(type: ItemMediaType::class))
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Item media updated successfully',
+        content: new OA\JsonContent(ref: new Model(type: ItemMedia::class, groups: ['item_media:read', 'item:read', 'base:read']))
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Invalid input',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'errors', type: 'object')])
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Item media not found',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'error', type: 'string')])
+    )]
+    #[Security(name: 'Bearer')]
     public function update(Request $request, string $uuid): JsonResponse
     {
         $itemMedia = $this->itemMediaRepository->findOneBy(['uuid' => $uuid]);
@@ -83,6 +156,29 @@ class ItemMediaController extends BaseApiController
     }
 
     #[Route('/{uuid}', name: 'item_media_show', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/item-medias/{uuid}',
+        summary: 'Get a specific item media',
+        description: 'Retrieves details of a specific item media by UUID'
+    )]
+    #[OA\Parameter(
+        name: 'uuid',
+        in: 'path',
+        description: 'UUID of the item media',
+        schema: new OA\Schema(type: 'string'),
+        required: true
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Successful operation',
+        content: new OA\JsonContent(ref: new Model(type: ItemMedia::class, groups: ['item_media:read', 'item:read', 'base:read']))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Item media not found',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'error', type: 'string')])
+    )]
+    #[Security(name: 'Bearer')]
     public function show(string $uuid): JsonResponse
     {
         $itemMedia = $this->itemMediaRepository->findOneBy(['uuid' => $uuid]);
@@ -95,6 +191,28 @@ class ItemMediaController extends BaseApiController
     }
 
     #[Route('/{uuid}', name: 'item_media_delete', methods: ['DELETE'])]
+    #[OA\Delete(
+        path: '/api/item-medias/{uuid}',
+        summary: 'Delete an item media',
+        description: 'Deletes an item media by UUID'
+    )]
+    #[OA\Parameter(
+        name: 'uuid',
+        in: 'path',
+        description: 'UUID of the item media to delete',
+        schema: new OA\Schema(type: 'string'),
+        required: true
+    )]
+    #[OA\Response(
+        response: 204,
+        description: 'Item media deleted successfully'
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Item media not found',
+        content: new OA\JsonContent(type: 'object', properties: [new OA\Property(property: 'error', type: 'string')])
+    )]
+    #[Security(name: 'Bearer')]
     public function delete(string $uuid): JsonResponse
     {
         $itemMedia = $this->itemMediaRepository->findOneBy(['uuid' => $uuid]);

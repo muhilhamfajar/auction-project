@@ -15,7 +15,7 @@ class AuctionBillService
     {
         $this->urlGenerator = $urlGenerator;
     }
-    
+
     public function generateBill(Item $item, Bid $winningBid): string
     {
         // Create new PDF document
@@ -79,5 +79,4 @@ class AuctionBillService
             'bidUuid' => $bid->getUuid()
         ], UrlGeneratorInterface::ABSOLUTE_URL);
     }
-
 }

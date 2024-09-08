@@ -14,7 +14,8 @@ class UserBidService
     public function __construct(
         private BidRepository $bidRepository,
         private AuctionBillService $auctionBillService
-    ) {}
+    ) {
+    }
 
     public function getCurrentBids(Request $request, User $user): array
     {
@@ -26,7 +27,7 @@ class UserBidService
 
         $result = $this->bidRepository->findCurrentBidsForUser($user, $search, $sort, $order);
         $mappedResult = $this->mapBidsData($result);
-        
+
         return $this->paginateResults($mappedResult, $page, $limit);
     }
 
@@ -40,44 +41,45 @@ class UserBidService
 
         $result = $this->bidRepository->findAwardedItemsForUser($user, $search, $sort, $order);
         $mappedResult = $this->mapBidsData($result, true);
-        
+
         return $this->paginateResults($mappedResult, $page, $limit);
     }
 
     private function mapBidsData(array $bids, bool $includeBillUrl = false): array
-{
-    return array_map(function ($bidData) use ($includeBillUrl) {
-        if ($bidData instanceof Bid) {
-            $bid = $bidData;
-            $item = $bid->getItem();
-        } elseif (is_array($bidData) && isset($bidData[0]) && $bidData[0] instanceof Bid) {
-            $bid = $bidData[0];
-            $item = $bid->getItem();
-        } else {
-            // Handle unexpected data type
-            throw new \InvalidArgumentException('Invalid bid data type');
-        }
+    {
+        return array_map(function ($bidData) use ($includeBillUrl) {
+            if ($bidData instanceof Bid) {
+                $bid = $bidData;
+                $item = $bid->getItem();
+            } elseif (is_array($bidData) && isset($bidData[0]) && $bidData[0] instanceof Bid) {
+                $bid = $bidData[0];
+                $item = $bid->getItem();
+            } else {
+                // Handle unexpected data type
+                throw new \InvalidArgumentException('Invalid bid data type');
+            }
 
-        $mappedBid = [
+            $mappedBid = [
             'id' => $bid->getId(),
             'amount' => $bid->getAmount(),
             'bidTime' => $bid->getBidTime()->format('c'),
             'status' => $bid->getStatus(),
             'item' => [
                 'id' => $item->getId(),
+                'uuid' => $item->getUuid(),
                 'name' => $item->getName(),
                 'status' => $item->getStatus(),
                 'auctionEndTime' => $item->getAuctionEndTime(),
             ]
-        ];
+            ];
 
-        if ($includeBillUrl && $bid->getStatus() === Bid::STATUS_WON) {
-            $mappedBid['billUrl'] = $this->auctionBillService->generateBillUrl($bid);
-        }
+            if ($includeBillUrl && $bid->getStatus() === Bid::STATUS_WON) {
+                $mappedBid['billUrl'] = $this->auctionBillService->generateBillUrl($bid);
+            }
 
-        return $mappedBid;
-    }, $bids);
-}
+            return $mappedBid;
+        }, $bids);
+    }
 
 
     private function paginateResults(array $results, int $page, int $limit): array
@@ -94,5 +96,4 @@ class UserBidService
             'data' => array_slice($results, $offset, $limit),
         ];
     }
-
 }
