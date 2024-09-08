@@ -44,6 +44,12 @@ const routes: CustomRouteRecordRaw[] = [
     meta: { layout: 'guest', requiresAuth: false, guest: true }
   },
   {
+    path: '/register',
+    name: 'register',
+    component: () => import('../pages/register.vue'),
+    meta: { layout: 'guest', requiresAuth: false, guest: true }
+  },
+  {
     path: '/items/add',
     name: 'itemsAdd',
     component: () => import('../pages/items/add.vue'),

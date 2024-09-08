@@ -16,6 +16,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const ROLE_USER = 'ROLE_USER';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(['user:read', 'user:write', 'base:read'])]
     #[Assert\NotBlank(message: 'Username is required')]
@@ -28,7 +31,7 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
     private ?string $username = null;
 
     #[ORM\Column]
-    #[Groups(['user:read', 'user:write', 'base:read'])]
+    #[Groups(['user:read', 'base:read'])]
     #[Assert\NotBlank(message: 'At least one role is required')]
     private array $roles = [];
 

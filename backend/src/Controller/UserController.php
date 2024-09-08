@@ -17,8 +17,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/users')]
 #[OA\Tag(name: 'Users')]
@@ -223,6 +224,63 @@ class UserController extends BaseApiController
 
         $errors = $this->getFormErrors($form);
         return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/register', name: 'api_register', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/users/register',
+        summary: 'Register a new user',
+        description: 'Creates a new user account with the provided data'
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(ref: new Model(type: UserType::class))
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'User registered successfully',
+        content: new OA\JsonContent(ref: new Model(type: User::class, groups: ['user:read', 'base:read']))
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Invalid input',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'errors', type: 'array', items: new OA\Items(type: 'string'))
+            ]
+        )
+    )]
+    public function register(
+        Request $request, 
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $user = new User();
+        $user->setRoles([User::ROLE_USER]);
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->submit($data);
+
+        if ($form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->serializeResponse($user, ['user:read', 'base:read'], Response::HTTP_CREATED);
+        }
+
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        return $this->json(['errors' => $errors], 400);
     }
 
     #[Route('/{uuid}', name: 'user_delete', methods: ['DELETE'])]
